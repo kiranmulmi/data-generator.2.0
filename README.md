@@ -9,11 +9,11 @@ Created Based on Custom MVC Framework
  
 **Virtual Host for windows**
 
-run this command form command ``/path/to/project/directory startserver.bat``
+run this form command prompt ``/path/to/project/directory startserver.bat``
 
 or
 
-``php -S localhost:8080``
+``/path/to/project/directory php -S localhost:8080``
 
 #Sample Screenshot
 ![GitHub Logo](/Screenshot.png)
