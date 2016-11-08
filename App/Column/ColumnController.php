@@ -27,6 +27,8 @@ class ColumnController extends BaseController
         $this->addParams("Database", $database);
         $this->addParams("Table", $table);
         $this->addParams("AllColumn", $this->columnRepo->GetDatabaseTableColumn($database, $table));
+
+        //dd( $this->columnRepo->GetDatabaseTableColumn($database, $table));
         $this->view("index");
     }
 }

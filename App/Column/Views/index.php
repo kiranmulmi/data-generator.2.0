@@ -148,6 +148,7 @@
                                     <optgroup label="Extra">
                                         <option data-type="text" value="custom_list">Custom List</option>
                                         <option data-type="varchar" value="url">URL</option>
+                                        <option data-type="foreign_key" value="foreign_key">Foreign Key</option>
                                     </optgroup>
 
                                     <optgroup label="Geo">
@@ -393,9 +394,10 @@
             extra_option.html('random longitude');
         } else if (select_type == "username") {
             extra_option.html('random username eg: abc123, bxt456 ');
-        }
-        else if (select_type == "password") {
+        } else if (select_type == "password") {
             extra_option.html('random password');
+        } else if (select_type == "foreign_key") {
+            extra_option.html('<input type="text" value="" class="form-control" placeholder="table_name | column_name"/>');
         }
     }
 

@@ -18,21 +18,27 @@ class GeneratorController
     private $fake_short_text;
     private $dummy_city;
     private $auto_inc;
+    private $dummy_country;
+    private $generatorRepo;
 
     public function __construct()
     {
+		
         $this->fakecompany = file('Dictionary/company');
         $this->fakename = file('Dictionary/name');
         $this->fakestreet = file('Dictionary/street');
         $this->fake_long_text = file('Dictionary/long-text');
         $this->fake_short_text = file('Dictionary/short-text');
         $this->dummy_city = file('Dictionary/city');
+        $this->dummy_country = file('Dictionary/country');
         $this->auto_inc = 1;
+
+        $this->generatorRepo = new GeneratorRepository();
     }
 
     public function index()
     {
-        $generatorRepo = new GeneratorRepository();
+
 
         $decoded_data = json_decode($_POST["json"]);
         $no_of_rows = $_POST["no_of_rows"];
@@ -43,7 +49,7 @@ class GeneratorController
 
         /*sql generate */
         if ($preview_or_generate == "generate") {
-            $connection = $generatorRepo->GetConnectedServerConnection($database);
+            $connection = $this->generatorRepo->GetConnectedServerConnection($database);
             $status = "success";
 
             $sql = "INSERT INTO `$table` ( ";
@@ -72,7 +78,7 @@ class GeneratorController
 
                 }
                 $exec = $sql.$sub_sql;
-                //echo "<pre>".$exec."</pre>";
+                echo "<pre>".$exec."</pre>";
                 $status = $connection->query($exec);
                 if($status) {
                     echo "success";
@@ -118,6 +124,12 @@ class GeneratorController
             } elseif (isset($options[0]) && isset($options[1]) && isset($options[2])) {
                 $return_text .= $first_name[0] . " " . $last_name[0] . " " . $last_name[1];
             }
+        } elseif ($selected_data_type == "foreign_key"){
+            $options = explode("|", $options);
+            $data = $this->generatorRepo->GetForeignKeyData($_POST["database"],$options[0], $options[1]);
+            $key = rand(0, count($data) - 1);
+            $return_text = $data[$key];
+
         } elseif ($selected_data_type == "phone") {
             $options = explode("|", $options);
             $prefixArray = explode(",", $options[0]);
@@ -129,9 +141,6 @@ class GeneratorController
             $name_key = rand(0, count($this->fakename)-1);
             $name = explode(",",$this->fakename[$name_key]);
             $return_text = strtolower($name[0]).substr(str_shuffle($O_to_9), 0, rand(4, 6))."@".substr(str_shuffle($a_to_z),0, rand(4,6)).".".$domain[rand(0,count($domain)-1)];
-            /*$key = rand(0, count($domain) - 1);
-            $email = substr(str_shuffle($a_to_z), 0, rand(4, 10)) . substr(str_shuffle($O_to_9), 0, rand(4, 6)) . "@" . substr(str_shuffle($a_to_z), 0, rand(4, 10)) . "." . $domain[$key];
-            return $email;*/
         } elseif ($selected_data_type == "date") {
             $dateArr = explode("|", $options);
             $min = strtotime($dateArr[0]);
@@ -171,9 +180,8 @@ class GeneratorController
         } elseif ($selected_data_type == "postal") {
             $return_text = rand(100, 1000);
         } elseif ($selected_data_type == "country") {
-            global $dummy_country;
-            $key = rand(0, count($dummy_country) - 1);
-            $return_text = $dummy_country[$key];
+            $key = rand(0, count($this->dummy_country) - 1);
+            $return_text = $this->dummy_country[$key];
         } elseif ($selected_data_type == "lat") {
             $radius = 100;
             $angle = deg2rad(mt_rand(0, 359));
